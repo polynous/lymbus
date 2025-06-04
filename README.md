@@ -50,10 +50,6 @@ uvicorn app.main:app --reload
 http://localhost:8000/docs
 ```
 
-## Equipo de Desarrollo
-
-Lymbus es una alternativa a Skolable, desarrollada para instituciones educativas de habla hispana.
-
 ## Licencia
 
 Este proyecto está licenciado bajo [LICENSE] - ver el archivo LICENSE para más detalles. 
