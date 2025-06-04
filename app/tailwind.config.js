@@ -1,0 +1,135 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+          800: '#3730a3',
+          900: '#312e81',
+          950: '#1e1b4b',
+        },
+        secondary: {
+          50: '#ecfeff',
+          100: '#cffafe',
+          200: '#a5f3fc',
+          300: '#67e8f9',
+          400: '#22d3ee',
+          500: '#06b6d4',
+          600: '#0891b2',
+          700: '#0e7490',
+          800: '#155e75',
+          900: '#164e63',
+          950: '#083344',
+        },
+        accent: {
+          50: '#fdf4ff',
+          100: '#fae8ff',
+          200: '#f5d0fe',
+          300: '#f0abfc',
+          400: '#e879f9',
+          500: '#d946ef',
+          600: '#c026d3',
+          700: '#a21caf',
+          800: '#86198f',
+          900: '#701a75',
+          950: '#4a044e',
+        },
+        coolgray: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Montserrat', 'sans-serif'],
+      },
+      // Enhanced border radius system
+      borderRadius: {
+        'xs': 'var(--radius-xs)',
+        'sm': 'var(--radius-sm)', 
+        'DEFAULT': 'var(--radius-md)',
+        'md': 'var(--radius-md)',
+        'lg': 'var(--radius-lg)',
+        'xl': 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        'full': 'var(--radius-full)',
+      },
+      // Enhanced transition system
+      transitionDuration: {
+        '400': '400ms',
+        '600': '600ms',
+        '800': '800ms',
+      },
+      transitionTimingFunction: {
+        'theme': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'smooth': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      },
+      backgroundImage: {
+        'noise': "url('data:image/png;base64,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')",
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'wave-pattern': "url(\"data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.362 1.222 24.629 4.928.955.383 1.869.74 2.75 1.072h6.225c-2.51-.73-5.139-1.691-8.233-2.928C65.888 13.278 60.562 12 50 12c-10.626 0-16.855 1.397-26.66 5.063l-1.767.662c-2.475.923-4.66 1.674-6.724 2.275h6.335zm0-20C13.258 2.892 8.077 4 0 4V2c5.744 0 9.951-.574 14.85-2h6.334zM77.38 0C85.239 2.966 90.502 4 100 4V2c-6.842 0-11.386-.542-16.396-2h-6.225zM0 14c8.44 0 13.718-1.21 22.272-4.402l1.768-.661C33.64 5.347 39.647 4 50 4c10.271 0 15.362 1.222 24.629 4.928C84.112 12.722 89.438 14 100 14v-2c-10.271 0-15.362-1.222-24.629-4.928C65.888 3.278 60.562 2 50 2 39.374 2 33.145 3.397 23.34 7.063l-1.767.662C13.223 10.84 8.163 12 0 12v2z' fill='%233730a3' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E\")",
+      },
+      backdropBlur: {
+        xs: '2px',
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+      },
+      boxShadow: {
+        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+        'glass-dark': '0 4px 30px rgba(255, 255, 255, 0.05)',
+        'neon': '0 0 5px theme(colors.primary.400), 0 0 20px theme(colors.primary.700)',
+        'neon-accent': '0 0 5px theme(colors.accent.400), 0 0 20px theme(colors.accent.700)',
+        'neon-secondary': '0 0 5px theme(colors.secondary.400), 0 0 20px theme(colors.secondary.700)',
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'gradient': 'gradient 15s ease infinite',
+        'theme-transition': 'theme-transition 400ms cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        gradient: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
+        'theme-transition': {
+          '0%': { opacity: '0.8' },
+          '50%': { opacity: '0.9' },
+          '100%': { opacity: '1' },
+        },
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
+} 
