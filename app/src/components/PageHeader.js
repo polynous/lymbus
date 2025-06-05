@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiCommand } from 'react-icons/fi';
-import { useWebSocketEvent, useRealTimeData, WS_CONFIG } from '../hooks/useWebSocket';
+import simpleWebSocketService from '../services/simpleWebSocket';
 
 const PageHeader = ({ 
   title, 
@@ -11,12 +11,19 @@ const PageHeader = ({
   children,
   className = ''
 }) => {
-  // Real-time updates for connection status
-  const { updates, lastUpdate } = useRealTimeData([
-    WS_CONFIG.EVENTS.STUDENT_EXIT,
-    WS_CONFIG.EVENTS.STUDENT_ENTRY,
-    WS_CONFIG.EVENTS.ATTENDANCE_UPDATE
-  ]);
+  // Real-time connection status
+  const [isConnected, setIsConnected] = useState(simpleWebSocketService.isConnected());
+  const [recentUpdates, setRecentUpdates] = useState(0);
+
+  useEffect(() => {
+    // Check connection status periodically
+    const checkConnection = () => {
+      setIsConnected(simpleWebSocketService.isConnected());
+    };
+    
+    const interval = setInterval(checkConnection, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -43,10 +50,10 @@ const PageHeader = ({
             </p>
           )}
           
-          {/* Recent updates indicator */}
-          {showRealTimeIndicator && updates.length > 0 && (
-            <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">
-              {updates.length} actualizaciones recientes
+          {/* Connection status indicator */}
+          {showRealTimeIndicator && (
+            <div className={`mt-2 text-xs ${isConnected ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              {isConnected ? 'Tiempo real activo' : 'Desconectado'}
             </div>
           )}
         </div>

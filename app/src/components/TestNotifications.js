@@ -1,9 +1,8 @@
 import React from 'react';
-import axios from 'axios';
 import { FiCheck, FiAlertTriangle, FiInfo, FiZap, FiTestTube } from 'react-icons/fi';
 import { useNotification } from './NotificationSystem';
 import { useAuth } from '../hooks/useAuth';
-import { API_URL, getAuthHeaders } from '../config/api';
+import axiosClient from '../utils/axiosConfig';
 
 const TestNotifications = () => {
   const { success, error, warning, info } = useNotification();
@@ -11,13 +10,11 @@ const TestNotifications = () => {
 
   const createSystemNotification = async () => {
     try {
-      await axios.post(`${API_URL}/notifications`, {
+      await axiosClient.post('/notifications', {
         title: 'Notificación de prueba',
         message: 'Esta es una notificación de prueba creada desde la configuración del sistema.',
         type: 'info',
         user_id: user.id
-      }, {
-        headers: getAuthHeaders()
       });
       success('Notificación del sistema creada correctamente');
     } catch (err) {

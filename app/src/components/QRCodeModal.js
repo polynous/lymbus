@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import axios from 'axios';
-import { API_URL, getAuthHeaders } from '../config/api';
+import axiosClient from '../utils/axiosConfig';
 import { toast } from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { FiX, FiCheck, FiDownload, FiShare2, FiClock, FiUser, FiCalendar } from 'react-icons/fi';
@@ -41,11 +40,9 @@ const QRCodeModal = ({ student, onClose, onSuccess }) => {
       // Try to make API call first, but fallback to local generation
       let apiQR = null;
       try {
-        const response = await axios.post(`${API_URL}/access/qr-codes/generate`, {
+        const response = await axiosClient.post('/access/qr-codes/generate', {
           student_id: student.id,
           expiration_days: expirationDays
-        }, {
-          headers: getAuthHeaders()
         });
         apiQR = response.data;
       } catch (apiError) {

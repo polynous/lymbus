@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import { API_URL } from '../config/api';
+import axiosClient from '../utils/axiosConfig';
 import { FiCheck, FiAlertTriangle, FiMail, FiUser, FiLock, FiPhone } from 'react-icons/fi';
 
 const Register = () => {
@@ -43,7 +42,7 @@ const Register = () => {
       if (!token) return;
 
       try {
-        const response = await axios.post(`${API_URL}/invitations/verify`, { token });
+        const response = await axiosClient.post('/invitations/verify', { token });
         if (response.data.valid) {
           setInvitationData(response.data);
         } else {
@@ -107,7 +106,7 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post(`${API_URL}/invitations/register`, {
+      const response = await axiosClient.post('/invitations/register', {
         token,
         first_name: formData.firstName,
         last_name: formData.lastName,

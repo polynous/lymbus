@@ -1,4 +1,5 @@
 import notificationApi from '../services/notificationApi';
+import axiosClient from './axiosConfig';
 
 /**
  * Utility functions to create system notifications for common events
@@ -455,23 +456,12 @@ export const createNotifications = {
 export const sendNotification = async (userId, notificationData) => {
   try {
     // This would require admin privileges in the backend
-    const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000/api'}/notifications`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('lymbus_token')}`
-      },
-      body: JSON.stringify({
-        ...notificationData,
-        user_id: userId
-      })
+    const response = await axiosClient.post('/notifications', {
+      ...notificationData,
+      user_id: userId
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to send notification');
-    }
-
-    return await response.json();
+    return response.data;
   } catch (error) {
     console.error('Error sending notification:', error);
     throw error;
@@ -496,17 +486,11 @@ export const broadcastNotification = async (userIds, notificationData) => {
  */
 export const getStaffUsers = async () => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000/api'}/auth/users?user_type=staff`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('lymbus_token')}`
-      }
+    const response = await axiosClient.get('/auth/users', {
+      params: { user_type: 'staff' }
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch staff users');
-    }
-
-    return await response.json();
+    return response.data;
   } catch (error) {
     console.error('Error fetching staff users:', error);
     return [];

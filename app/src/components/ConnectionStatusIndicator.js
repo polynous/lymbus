@@ -1,21 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { FiWifi, FiWifiOff } from 'react-icons/fi';
-import { wsManager, CONNECTION_STATES } from '../hooks/useWebSocket';
+import simpleWebSocketService from '../services/simpleWebSocket';
 
 const ConnectionStatusIndicator = () => {
-  const [connectionState, setConnectionState] = useState(wsManager.getConnectionInfo().state);
+  const [connected, setConnected] = useState(simpleWebSocketService.isConnected());
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
 
   useEffect(() => {
-    // Subscribe to connection state changes
-    const removeListener = wsManager.addStateListener((info) => {
-      setConnectionState(info.state);
-    });
+    // Check connection status periodically
+    const checkConnection = () => {
+      setConnected(simpleWebSocketService.isConnected());
+    };
     
-    return removeListener;
+    // Check immediately
+    checkConnection();
+    
+    // Set up interval to check every 2 seconds
+    const interval = setInterval(checkConnection, 2000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -48,8 +54,6 @@ const ConnectionStatusIndicator = () => {
     }
   }, [showTooltip]);
 
-  const isConnected = connectionState === CONNECTION_STATES.CONNECTED;
-
   const tooltipContent = showTooltip ? createPortal(
     <div 
       className="fixed z-[9999] w-48 p-2 bg-white dark:bg-slate-800 rounded-lg shadow-xl text-xs border border-slate-200 dark:border-slate-600"
@@ -60,14 +64,10 @@ const ConnectionStatusIndicator = () => {
       }}
     >
       <div className="font-medium mb-1">
-        Estado: {isConnected ? 'Conectado' : 'Desconectado'}
+        Estado: {connected ? 'Conectado' : 'Desconectado'}
       </div>
       <div className="text-slate-500 dark:text-slate-400">
-        {connectionState === CONNECTION_STATES.RECONNECTING && 'Intentando reconectar...'}
-        {connectionState === CONNECTION_STATES.ERROR && 'Error de conexión'}
-        {connectionState === CONNECTION_STATES.DISCONNECTED && 'Sin conexión al servidor'}
-        {connectionState === CONNECTION_STATES.CONNECTING && 'Conectando...'}
-        {connectionState === CONNECTION_STATES.CONNECTED && 'Conexión establecida'}
+        {connected ? 'Conexión WebSocket establecida' : 'Sin conexión al servidor'}
       </div>
     </div>,
     document.body
@@ -78,14 +78,14 @@ const ConnectionStatusIndicator = () => {
       <button 
         ref={buttonRef}
         className={`flex items-center space-x-2 px-2 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${
-          isConnected 
+          connected 
             ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' 
             : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 animate-pulse'
         }`}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
-        {isConnected ? (
+        {connected ? (
           <>
             <FiWifi className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Conectado</span>

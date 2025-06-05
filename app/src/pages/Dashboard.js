@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { API_URL, getAuthHeaders } from '../config/api';
+import axiosClient from '../utils/axiosConfig';
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../components/NotificationSystem';
 import TimeSettingsDropdown from '../components/TimeSettingsDropdown';
@@ -80,9 +79,8 @@ const Dashboard = () => {
       setIsLoading(true);
       
       // API call for real stats would go here
-      const response = await axios.get(`${API_URL}/access/stats/dashboard`, {
-        params: { date: selectedDate },
-        headers: getAuthHeaders()
+      const response = await axiosClient.get('/access/stats/dashboard', {
+        params: { date: selectedDate }
       });
       
       // Use centralized stats calculation

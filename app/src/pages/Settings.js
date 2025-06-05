@@ -789,21 +789,7 @@ const Settings = () => {
                     })}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">
-                      Retención de datos
-                    </label>
-                    <select
-                      value={systemSettings.data_retention}
-                      onChange={(e) => handleSystemChange('data_retention', e.target.value)}
-                      className="glass-input"
-                    >
-                      <option value="6_months">6 meses</option>
-                      <option value="1_year">1 año</option>
-                      <option value="2_years">2 años</option>
-                      <option value="indefinite">Indefinido</option>
-                    </select>
-                  </div>
+
 
                   <div className="flex justify-end pt-4">
                     <button
@@ -822,48 +808,7 @@ const Settings = () => {
                 </div>
               </div>
 
-              {/* Data Management */}
-              <div className="glass-card p-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="icon-container icon-container-lg icon-secondary">
-                    <FiDatabase className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-primary">Gestión de Datos</h2>
-                    <p className="text-sm text-secondary">Exporta o elimina tus datos personales</p>
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 glass-card-secondary rounded-lg">
-                    <div>
-                      <h3 className="font-medium text-primary">Exportar datos</h3>
-                      <p className="text-sm text-secondary">Descarga una copia de toda tu información</p>
-                    </div>
-                    <button
-                      onClick={exportData}
-                      className="btn-secondary flex items-center space-x-2"
-                    >
-                      <FiDownload className="h-4 w-4" />
-                      <span>Exportar</span>
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 glass-card-secondary rounded-lg border border-red-200 dark:border-red-800">
-                    <div>
-                      <h3 className="font-medium text-red-600 dark:text-red-400">Eliminar cuenta</h3>
-                      <p className="text-sm text-red-500 dark:text-red-300">Esta acción no se puede deshacer</p>
-                    </div>
-                    <button
-                      onClick={deleteAccount}
-                      className="btn-danger flex items-center space-x-2"
-                    >
-                      <FiTrash2 className="h-4 w-4" />
-                      <span>Eliminar</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
 
@@ -919,10 +864,35 @@ const Settings = () => {
               </div>
 
               <div className="space-y-4">
+                <div className="p-4 glass-card-secondary rounded-lg">
+                  <div className="mb-3">
+                    <h3 className="font-medium text-primary">Política de retención de datos</h3>
+                    <p className="text-sm text-secondary">Controla cuánto tiempo se conservan tus datos personales</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Período de retención
+                    </label>
+                    <select
+                      value={systemSettings.data_retention}
+                      onChange={(e) => handleSystemChange('data_retention', e.target.value)}
+                      className="glass-input"
+                    >
+                      <option value="6_months">6 meses</option>
+                      <option value="1_year">1 año</option>
+                      <option value="2_years">2 años</option>
+                      <option value="indefinite">Indefinido</option>
+                    </select>
+                    <p className="text-xs text-muted mt-1">
+                      Los datos se eliminarán automáticamente después del período seleccionado
+                    </p>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between p-4 glass-card-secondary rounded-lg">
                   <div>
                     <h3 className="font-medium text-primary">Exportar datos</h3>
-                    <p className="text-sm text-secondary">Descarga una copia de toda tu información</p>
+                    <p className="text-sm text-secondary">Descarga una copia de toda tu información personal</p>
                   </div>
                   <button
                     onClick={exportData}
@@ -936,7 +906,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between p-4 glass-card-secondary rounded-lg border border-red-200 dark:border-red-800">
                   <div>
                     <h3 className="font-medium text-red-600 dark:text-red-400">Eliminar cuenta</h3>
-                    <p className="text-sm text-red-500 dark:text-red-300">Esta acción no se puede deshacer</p>
+                    <p className="text-sm text-red-500 dark:text-red-300">Esta acción eliminará permanentemente todos tus datos</p>
                   </div>
                   <button
                     onClick={deleteAccount}
@@ -944,6 +914,21 @@ const Settings = () => {
                   >
                     <FiTrash2 className="h-4 w-4" />
                     <span>Eliminar</span>
+                  </button>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                  <button
+                    onClick={() => saveSettings('system')}
+                    disabled={isSaving}
+                    className="btn-primary flex items-center space-x-2"
+                  >
+                    {isSaving ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                    ) : (
+                      <FiSave className="h-4 w-4" />
+                    )}
+                    <span>{isSaving ? 'Guardando...' : 'Guardar Configuración de Datos'}</span>
                   </button>
                 </div>
               </div>

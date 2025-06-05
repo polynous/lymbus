@@ -7,7 +7,7 @@ import ProtectedRoute, { StaffOnlyRoute, ParentOnlyRoute, AuthenticatedRoute } f
 import MainLayout from './layouts/MainLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import StudentEntry from './pages/StudentEntry';
+import StudentEntry from './pages/StudentEntrySimplified';
 import StudentCheckout from './pages/StudentCheckout';
 import TeacherGroupPickup from './pages/TeacherGroupPickup';
 import InviteUsers from './pages/InviteUsers';
@@ -16,13 +16,12 @@ import StudentDetail from './pages/StudentDetail';
 import Notifications from './pages/Notifications';
 import Attendance from './pages/Attendance';
 import StaffList from './pages/StaffList';
-import webSocketService from './services/websocketService';
+import simpleWebSocket from './services/simpleWebSocket';
 
 // New component to consume the theme context
 const ThemedApp = () => {
   const { darkMode } = useTheme();
-  const { info, error } = useNotification();
-  // const navigate = useNavigate(); // If needed here, ensure Router is above in hierarchy
+  const { info } = useNotification();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
@@ -30,23 +29,14 @@ const ThemedApp = () => {
 
   // Initialize WebSocket connection when app starts
   useEffect(() => {
-    const initializeWebSocket = async () => {
-      try {
-        await webSocketService.initialize();
-        info('Conexión en tiempo real establecida');
-      } catch (err) {
-        console.error('Failed to initialize WebSocket:', err);
-        error('No se pudo establecer la conexión en tiempo real');
-      }
-    };
-
-    initializeWebSocket();
+    simpleWebSocket.connect();
+    info('Conexión en tiempo real establecida');
 
     // Cleanup on unmount
     return () => {
-      webSocketService.disconnect();
+      simpleWebSocket.disconnect();
     };
-  }, [info, error]);
+  }, [info]);
 
   return (
     // The div and Routes structure was previously inside AppContent's AuthProvider
