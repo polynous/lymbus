@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axiosClient from '../utils/axiosConfig';
 import { useAuth } from '../hooks/useAuth';
@@ -9,12 +9,9 @@ import {
   FiCalendar, 
   FiArrowRight, 
   FiArrowLeft, 
-  FiLogIn,
   FiTrendingUp,
   FiTrendingDown,
   FiBarChart2,
-  FiPieChart,
-  FiActivity,
   FiClock,
   FiDownload,
   FiRefreshCw,
@@ -74,7 +71,7 @@ const Dashboard = () => {
     };
   }, [selectedDate]);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = useCallback(async () => {
     try {
       setIsLoading(true);
       
@@ -118,7 +115,7 @@ const Dashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedDate, error, setStats, setIsLoading]);
 
   const handleRefresh = () => {
     fetchDashboardStats();
@@ -163,7 +160,6 @@ const Dashboard = () => {
         document.body.removeChild(link);
         
         success('Datos del dashboard exportados exitosamente');
-        info(`Archivo: dashboard_${exportDate}.csv`);
       }, 1500);
       
          } catch (error) {

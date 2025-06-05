@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios'; // Removed direct axios import
-import axiosClient from '../utils/axiosConfig'; // USE AXIOSCLIENT
-import { API_URL } from '../config/api'; // getAuthHeaders will not be needed with axiosClient
-import { toast } from 'react-hot-toast';
+import axiosClient from '../utils/axiosConfig';
 import { 
-  FiMail, 
-  FiUser, 
   FiCheck, 
   FiAlertTriangle, 
   FiCopy, 
@@ -13,20 +8,11 @@ import {
   FiSend,
   FiTrash2,
   FiRefreshCw,
-  FiEye,
-  FiEyeOff,
   FiArrowRight,
   FiArrowLeft,
-  FiUsers,
-  FiShield,
-  FiCalendar,
-  FiClock,
-  FiX,
-  FiDownload,
-  FiFilter
+  FiUsers
 } from 'react-icons/fi';
 import { useTheme } from '../hooks/useTheme';
-import GlassCard from '../components/GlassCard';
 import PageLoader from '../components/PageLoader';
 import PageHeader from '../components/PageHeader';
 import { createPortal } from 'react-dom';
@@ -35,7 +21,6 @@ import { LocalStorage } from '../utils/localStorage';
 import { useAuth } from '../hooks/useAuth'; // Import useAuth
 
 const InviteUsers = () => {
-  const { darkMode } = useTheme();
   const { user: authUser } = useAuth(); // Get the authenticated user
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);

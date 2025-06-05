@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios'; // To be removed
-// import { API_URL, getAuthHeaders } from '../config/api'; // To be removed
-import axiosClient from '../utils/axiosConfig'; // Added
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../components/NotificationSystem';
 import { 
@@ -15,27 +12,20 @@ import {
   FiEyeOff,
   FiCheck,
   FiAlertTriangle,
-  FiRefreshCw,
-  FiMoon,
-  FiSun,
-  FiGlobe,
   FiMail,
   FiPhone,
   FiHome,
-  FiKey,
   FiDatabase,
   FiDownload,
   FiTrash2,
-  FiInfo,
-  FiTestTube,
-  FiZap
+  FiInfo
 } from 'react-icons/fi';
 import PageLoader from '../components/PageLoader';
 import PageHeader from '../components/PageHeader';
 
 const Settings = () => {
   const { user, setUser } = useAuth();
-  const { success, error, warning, info } = useNotification();
+  const { success, error } = useNotification();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [isSaving, setIsSaving] = useState(false);

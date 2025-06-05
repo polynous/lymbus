@@ -1,4 +1,3 @@
-import notificationApi from '../services/notificationApi';
 import axiosClient from './axiosConfig';
 
 /**
