@@ -18,7 +18,8 @@ import {
   FiDatabase,
   FiDownload,
   FiTrash2,
-  FiInfo
+  FiInfo,
+  FiMoon
 } from 'react-icons/fi';
 import PageLoader from '../components/PageLoader';
 import PageHeader from '../components/PageHeader';
