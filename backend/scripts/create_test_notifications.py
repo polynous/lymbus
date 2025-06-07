@@ -63,7 +63,7 @@ def create_test_notifications():
             },
             {
                 'title': 'Alerta de asistencia',
-                'message': 'Algunos estudiantes no han registrado entrada hoy',
+                'message': 'Algunos alumnos no han registrado entrada hoy',
                 'type': 'warning',
                 'user_id': user_id
             }

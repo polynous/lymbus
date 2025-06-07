@@ -7,7 +7,7 @@ import { FiMail, FiLock, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
 import DarkModeToggle from '../components/DarkModeToggle';
 
 // Import logo using require
-const logo = require('../images/logo.svg').default;
+const logo = require('../assets/logo.svg').default;
 
 // Environment variables for demo credentials
 const demoAdminEmail = process.env.REACT_APP_DEMO_ADMIN_EMAIL;

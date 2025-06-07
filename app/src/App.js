@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
 import { ThemeProvider, useTheme } from './hooks/useTheme';
@@ -17,26 +17,79 @@ import Notifications from './pages/Notifications';
 import Attendance from './pages/Attendance';
 import StaffList from './pages/StaffList';
 import simpleWebSocket from './services/simpleWebSocket';
+import notificationManager from './services/notificationManager';
+import { initializeAudioContext } from './utils/notificationHelpers';
+import { useAuth } from './hooks/useAuth';
 
 // New component to consume the theme context
 const ThemedApp = () => {
   const { darkMode } = useTheme();
-  const { info } = useNotification();
+  const uiNotificationSystem = useNotification();
+  const { isLoading: authLoading } = useAuth();
+  const initializationRef = useRef(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
-  // Initialize WebSocket connection when app starts
+  // Initialize notification system and WebSocket connection when app starts (only once)
   useEffect(() => {
+    if (initializationRef.current) return;
+    
+    console.log('🚀 Initializing notification system...');
+    
+    // Connect the UI notification system to the notification manager
+    notificationManager.connectUISystem(uiNotificationSystem);
+    
+    // Initialize WebSocket connection
     simpleWebSocket.connect();
-    info('Conexión en tiempo real establecida');
+    
+    // Mark as initialized
+    initializationRef.current = true;
+
+    // Initialize audio context on first user interaction
+    const handleUserInteraction = () => {
+      initializeAudioContext();
+      // Remove listeners after first interaction
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+    };
+
+    // Add event listeners for user interaction
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('keydown', handleUserInteraction);
+    document.addEventListener('touchstart', handleUserInteraction);
 
     // Cleanup on unmount
     return () => {
       simpleWebSocket.disconnect();
+      notificationManager.disconnectUISystem();
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      initializationRef.current = false;
     };
-  }, [info]);
+  }, []); // Empty dependency array - run only once
+
+  // Show loading screen while auth is initializing
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-500 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl mb-4 animate-pulse">
+            <div className="w-8 h-8 border-4 border-white border-opacity-30 border-t-white rounded-full animate-spin"></div>
+          </div>
+          <h2 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
+            Cargando...
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400">
+            Inicializando aplicación
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     // The div and Routes structure was previously inside AppContent's AuthProvider
@@ -84,7 +137,7 @@ const ThemedApp = () => {
           <Route path="asistencia" element={<Attendance />} />
           <Route path="notificaciones" element={<Notifications />} />
           <Route path="configuracion" element={<Settings />} />
-          <Route path="estudiante/:id" element={<StudentDetail />} />
+          <Route path="alumno/:id" element={<StudentDetail />} />
         </Route>
         
         {/* Default Redirect */}
@@ -102,7 +155,12 @@ const AppContent = () => {
   return (
     <ThemeProvider>
       <NotificationProvider> {/* Router needs to be inside NotificationProvider if useNotification is used in ThemedApp/pages via navigate hook effects */}
-        <Router>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           <AuthProvider> {/* AuthProvider needs to be inside Router if useAuth uses navigate */}
             <ThemedApp />
           </AuthProvider>

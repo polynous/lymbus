@@ -12,10 +12,10 @@ from app.models import Student, AccessLog, AccessType, AuthorizedBy, Staff
 def crear_registros_acceso():
     db = SessionLocal()
     try:
-        # Obtener todos los estudiantes
-        estudiantes = db.query(Student).all()
-        if not estudiantes:
-            print("No hay estudiantes en la base de datos.")
+        # Obtener todos los alumnos
+        alumnos = db.query(Student).all()
+        if not alumnos:
+            print("No hay alumnos en la base de datos.")
             return
         
         # Obtener un miembro del staff para autorizar los accesos
@@ -29,8 +29,8 @@ def crear_registros_acceso():
         entradas_creadas = 0
         salidas_creadas = 0
         
-        # Para cada estudiante, decidir aleatoriamente si hoy asistió o no
-        for estudiante in estudiantes:
+        # Para cada alumno, decidir aleatoriamente si hoy asistió o no
+        for alumno in alumnos:
             # 80% de probabilidad de asistencia
             if random.random() < 0.8:
                 # Hora de entrada aleatoria entre 7:00 AM y 8:30 AM
@@ -39,7 +39,7 @@ def crear_registros_acceso():
                 
                 # Crear registro de entrada
                 entrada = AccessLog(
-                    student_id=estudiante.id,
+                    student_id=alumno.id,
                     access_type=AccessType.ENTRADA,
                     timestamp=hora_entrada,
                     authorized_by=AuthorizedBy.MANUAL,
@@ -49,7 +49,7 @@ def crear_registros_acceso():
                 db.add(entrada)
                 entradas_creadas += 1
                 
-                # 70% de probabilidad de que ya haya salido (para simular estudiantes presentes)
+                # 70% de probabilidad de que ya haya salido (para simular alumnos presentes)
                 if random.random() < 0.7:
                     # Hora de salida aleatoria entre 1:00 PM y 3:00 PM
                     hora_base_salida = hoy.replace(hour=13, minute=0)
@@ -58,7 +58,7 @@ def crear_registros_acceso():
                     
                     # Crear registro de salida
                     salida = AccessLog(
-                        student_id=estudiante.id,
+                        student_id=alumno.id,
                         access_type=AccessType.SALIDA,
                         timestamp=hora_salida,
                         authorized_by=AuthorizedBy.MANUAL,

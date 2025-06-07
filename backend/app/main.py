@@ -9,7 +9,10 @@ from datetime import datetime
 
 from app.models import create_tables
 from app.database import engine
-from app.routes import auth, access, invitations, notifications, teacher, pickup
+from app.routes import auth, access, invitations, notifications, teacher, pickup, attendance
+from app.middleware.rate_limiting import RateLimitMiddleware
+from app.routes import students
+# from app.routes import compliance  # Temporarily disabled due to SQLAlchemy Column issue
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -24,12 +27,31 @@ app = FastAPI(
 # Configuración de CORS mejorada
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://localhost:(3000|3001|3002|3003|3004)|http://127\.0\.0\.1:(3000|3001|3002|3003|3004)",
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001", 
+        "http://localhost:3002",
+        "http://localhost:3003",
+        "http://localhost:3004",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3002",
+        "http://127.0.0.1:3003",
+        "http://127.0.0.1:3004"
+    ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+# Rate limiting middleware
+rate_limiter = RateLimitMiddleware()
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Apply rate limiting to all requests"""
+    return await rate_limiter(request, call_next)
 
 # WebSocket connection manager
 class ConnectionManager:
@@ -172,18 +194,16 @@ async def broadcast_update(event_type: str, data: dict):
     })
     await manager.broadcast(message)
 
-# Import new route modules
-from app.routes import students, attendance
-
 # Registrar rutas
 app.include_router(auth.router, prefix="/api/auth", tags=["autenticación"])
-app.include_router(students.router, prefix="/api/students", tags=["estudiantes"])
+app.include_router(students.router, prefix="/api/students", tags=["alumnos"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["asistencia"])
 app.include_router(access.router, prefix="/api/access", tags=["control-acceso"])
 app.include_router(invitations.router, prefix="/api/invitations", tags=["invitaciones"])
 app.include_router(notifications.router, prefix="/api", tags=["notificaciones"])
 app.include_router(teacher.router, prefix="/api/teacher", tags=["profesor"])
 app.include_router(pickup.router, prefix="/api/pickup", tags=["recogidas"])
+# app.include_router(compliance.router, prefix="/api/compliance", tags=["compliance"])  # Temporarily disabled
 
 # Crear tablas en la base de datos al iniciar
 @app.on_event("startup")

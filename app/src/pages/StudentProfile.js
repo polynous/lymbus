@@ -79,14 +79,14 @@ const StudentProfile = () => {
       } catch (err) {
         console.error('Error fetching student data:', err);
         
-        let errorMessage = 'No se pudo cargar la información del estudiante. Por favor, intente de nuevo.';
+        let errorMessage = 'No se pudo cargar la información del alumno. Por favor, intente de nuevo.';
         
         if (err.response) {
           // The request was made and the server responded with an error status code
           if (err.response.status === 404) {
-            errorMessage = 'Estudiante no encontrado.';
+            errorMessage = 'alumno no encontrado.';
           } else if (err.response.status === 403) {
-            errorMessage = 'No tienes permiso para ver este estudiante.';
+            errorMessage = 'No tienes permiso para ver este alumno.';
           } else if (err.response.data && err.response.data.detail) {
             errorMessage = err.response.data.detail;
           }
@@ -184,7 +184,7 @@ const StudentProfile = () => {
       <div className={`p-4 rounded-md ${
         darkMode ? 'bg-yellow-900/50 text-yellow-200' : 'bg-yellow-50 text-yellow-700'
       }`}>
-        <p>No se encontró información del estudiante.</p>
+        <p>No se encontró información del alumno.</p>
         <button 
           onClick={goBack}
           className="mt-4 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -213,12 +213,12 @@ const StudentProfile = () => {
           <h1 className={`text-2xl font-semibold ${
             darkMode ? 'text-white' : 'text-gray-900'
           }`}>
-            Perfil de Estudiante
+            Perfil de alumno
           </h1>
           <p className={`mt-1 text-sm ${
             darkMode ? 'text-slate-300' : 'text-gray-600'
           }`}>
-            Información detallada sobre {typeof student.full_name === 'object' ? 'Estudiante' : (student.full_name || `${student.first_name || ''} ${student.last_name || ''}`)}
+            Información detallada sobre {typeof student.full_name === 'object' ? 'alumno' : (student.full_name || `${student.first_name || ''} ${student.last_name || ''}`)}
           </p>
         </div>
       </div>
@@ -297,7 +297,7 @@ const StudentProfile = () => {
             <h3 className={`text-lg leading-6 font-medium ${
               darkMode ? 'text-white' : 'text-gray-900'
             }`}>
-              Información del Estudiante
+              Información del alumno
             </h3>
             <p className={`mt-1 max-w-2xl text-sm ${
               darkMode ? 'text-slate-300' : 'text-gray-500'
@@ -429,12 +429,12 @@ const StudentProfile = () => {
             <h3 className={`text-lg leading-6 font-medium ${
               darkMode ? 'text-white' : 'text-gray-900'
             }`}>
-              Tutores del Estudiante
+              Tutores del alumno
             </h3>
             <p className={`mt-1 max-w-2xl text-sm ${
               darkMode ? 'text-slate-300' : 'text-gray-500'
             }`}>
-              Información de contacto de los tutores asociados a {typeof student.first_name === 'object' ? 'estudiante' : student.first_name || 'estudiante'}.
+              Información de contacto de los tutores asociados a {typeof student.first_name === 'object' ? 'alumno' : student.first_name || 'alumno'}.
             </p>
           </div>
           <div className={`border-t ${
@@ -498,7 +498,7 @@ const StudentProfile = () => {
               <div className={`px-4 py-5 text-center ${
                 darkMode ? 'text-slate-300' : 'text-gray-500'
               }`}>
-                No hay tutores asociados a este estudiante.
+                No hay tutores asociados a este alumno.
               </div>
             )}
           </div>
@@ -603,7 +603,7 @@ const StudentProfile = () => {
               <div className={`px-4 py-5 text-center ${
                 darkMode ? 'text-slate-300' : 'text-gray-500'
               }`}>
-                No hay registros de acceso para este estudiante.
+                No hay registros de acceso para este alumno.
               </div>
             )}
           </div>

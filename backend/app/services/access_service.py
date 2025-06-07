@@ -17,10 +17,10 @@ def register_student_entry(
     db: Session
 ) -> Tuple[bool, str, Optional[AccessLog]]:
     """
-    Registra la entrada o salida de un estudiante.
+    Registra la entrada o salida de un alumno.
     
     Args:
-        student_id: ID del estudiante
+        student_id: ID del alumno
         access_type: Tipo de acceso (entrada/salida)
         guardian_id: ID del tutor (opcional)
         authorized_by: Método de autorización
@@ -31,20 +31,20 @@ def register_student_entry(
     Returns:
         Tupla con (éxito, mensaje, registro de acceso)
     """
-    # Verificar que el estudiante existe
+    # Verificar que el alumno existe
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
-        return False, f"No se encontró un estudiante con ID {student_id}", None
+        return False, f"No se encontró un alumno con ID {student_id}", None
     
-    # Si hay un tutor, verificar que existe y está asociado al estudiante
+    # Si hay un tutor, verificar que existe y está asociado al alumno
     if guardian_id:
         guardian = db.query(Guardian).filter(Guardian.id == guardian_id).first()
         if not guardian:
             return False, f"No se encontró un tutor con ID {guardian_id}", None
         
-        # Verificar que el tutor está asociado al estudiante
+        # Verificar que el tutor está asociado al alumno
         if student not in guardian.students:
-            return False, f"El tutor no está autorizado para este estudiante", None
+            return False, f"El tutor no está autorizado para este alumno", None
     
     # Crear el registro de acceso
     access_log = AccessLog(
@@ -65,11 +65,11 @@ def register_student_entry(
     
     # Mensaje según el tipo de acceso
     action = "entrada" if access_type == AccessType.ENTRADA else "salida"
-    return True, f"Se ha registrado la {action} del estudiante {student.full_name()}", access_log
+    return True, f"Se ha registrado la {action} del alumno {student.full_name()}", access_log
 
 def _create_access_notifications(student: Student, access_type: AccessType, access_log: AccessLog, db: Session):
     """
-    Crea notificaciones para todos los tutores de un estudiante cuando entra o sale.
+    Crea notificaciones para todos los tutores de un alumno cuando entra o sale.
     """
     notification_service = NotificationService(db)
     
@@ -87,7 +87,7 @@ def _create_access_notifications(student: Student, access_type: AccessType, acce
         message = f"{student.full_name()} ha salido de la escuela a las {time_str}"
         notification_type = "info"
     
-    # Crear notificaciones para todos los tutores del estudiante
+    # Crear notificaciones para todos los tutores del alumno
     for guardian in student.guardians:
         if guardian.user:  # Verificar que el tutor tiene un usuario asociado
             try:
@@ -103,7 +103,7 @@ def _create_access_notifications(student: Student, access_type: AccessType, acce
 
 def process_student_checkout(request: StudentCheckoutRequest, db: Session) -> StudentCheckoutResponse:
     """
-    Procesa una solicitud de salida de estudiante.
+    Procesa una solicitud de salida de alumno.
     
     Args:
         request: Datos de la solicitud
@@ -116,7 +116,7 @@ def process_student_checkout(request: StudentCheckoutRequest, db: Session) -> St
     if not student:
         return StudentCheckoutResponse(
             success=False,
-            message=f"No se encontró un estudiante con ID {request.student_id}",
+            message=f"No se encontró un alumno con ID {request.student_id}",
             access_log_id=None
         )
     
@@ -170,10 +170,10 @@ def process_student_checkout(request: StudentCheckoutRequest, db: Session) -> St
 
 def get_student_access_logs(student_id: int, limit: int, db: Session):
     """
-    Obtiene los registros de acceso de un estudiante.
+    Obtiene los registros de acceso de un alumno.
     
     Args:
-        student_id: ID del estudiante
+        student_id: ID del alumno
         limit: Número máximo de registros a devolver
         db: Sesión de base de datos
         

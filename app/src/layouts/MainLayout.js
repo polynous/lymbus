@@ -39,7 +39,7 @@ import SimpleNotificationDropdown from '../components/SimpleNotificationDropdown
 import QuickActions from '../components/QuickActions';
 
 // Import logo using require
-const logo = require('../images/logo.svg').default;
+const logo = require('../assets/logo.svg').default;
 
 const MainLayout = () => {
   const { user, logout } = useAuth();
@@ -72,7 +72,7 @@ const MainLayout = () => {
     { 
       path: '/app/entrada', 
       icon: <FiLogIn className="h-5 w-5" />, 
-      text: 'Entrada de Estudiantes',
+      text: 'Entrada de alumnos',
       description: 'Registrar llegadas diarias',
       badge: null
     },
@@ -155,14 +155,14 @@ const MainLayout = () => {
 
     // Map path segments to breadcrumb items
     const pathMap = {
-      'entrada': { label: 'Entrada de Estudiantes', icon: <FiLogIn className="h-4 w-4" /> },
+      'entrada': { label: 'Entrada de alumnos', icon: <FiLogIn className="h-4 w-4" /> },
       'recogida': { label: 'Coordinación de Recogida', icon: <FiTruck className="h-4 w-4" /> },
       'maestros': { label: 'Vista de Maestros', icon: <FiUsers className="h-4 w-4" /> },
       'invitaciones': { label: 'Gestión de Usuarios', icon: <FiUserPlus className="h-4 w-4" /> },
       'configuracion': { label: 'Configuración', icon: <FiSettings className="h-4 w-4" /> },
       'asistencia': { label: 'Historial de Asistencia', icon: <FiClock className="h-4 w-4" /> },
       'notificaciones': { label: 'Notificaciones', icon: <FiBell className="h-4 w-4" /> },
-      'estudiante': { label: 'Perfil de Estudiante', icon: <FiUser className="h-4 w-4" /> }
+      'alumno': { label: 'Perfil de alumno', icon: <FiUser className="h-4 w-4" /> }
     };
 
     // Build breadcrumbs from path segments

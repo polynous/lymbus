@@ -102,10 +102,7 @@ export const useNotifications = () => {
       if (process.env.NODE_ENV === 'development') {
         console.error('Error fetching unread count:', err);
       }
-      // Fallback to mock count
-      if (notifications.length > 0) {
-        setUnreadCount(notifications.filter(n => !n.read).length);
-      }
+      // Don't update count on error to prevent loops
     }
   }, [isUsingMockData, notifications]);
 

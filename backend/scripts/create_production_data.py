@@ -415,7 +415,7 @@ def create_sample_notifications(db):
         },
         {
             "title": "Salida Temprana",
-            "message": "Mañana los estudiantes saldrán a las 13:00 por jornada pedagógica",
+            "message": "Mañana los alumnos saldrán a las 13:00 por jornada pedagógica",
             "type": "warning"
         },
         {
@@ -430,7 +430,7 @@ def create_sample_notifications(db):
         },
         {
             "title": "Alerta de Asistencia",
-            "message": "Algunos estudiantes han sido marcados como ausentes. Por favor verifique.",
+            "message": "Algunos alumnos han sido marcados como ausentes. Por favor verifique.",
             "type": "error"
         }
     ]

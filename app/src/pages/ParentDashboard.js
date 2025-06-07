@@ -25,17 +25,17 @@ const ParentDashboard = () => {
         if (response.data) {
           setStudents(response.data);
           if (response.data.length === 0) {
-            // setError('No tienes estudiantes asociados a tu cuenta.'); // Or an info message
+            // setError('No tienes alumnos asociados a tu cuenta.'); // Or an info message
           }
         } else {
           setStudents([]);
-          // setError('No se pudo obtener la lista de estudiantes.');
+          // setError('No se pudo obtener la lista de alumnos.');
         }
       } catch (err) {
         console.error('Error fetching guardian students:', err);
-        let errorMessage = 'No se pudieron cargar los estudiantes. Por favor, intenta de nuevo más tarde.';
+        let errorMessage = 'No se pudieron cargar los alumnos. Por favor, intenta de nuevo más tarde.';
         if (err.response?.status === 404) {
-            errorMessage = 'No se encontraron estudiantes asociados a tu cuenta. Si crees que esto es un error, contacta a soporte.';
+            errorMessage = 'No se encontraron alumnos asociados a tu cuenta. Si crees que esto es un error, contacta a soporte.';
         } else if (err.response?.data?.detail) {
             errorMessage = err.response.data.detail;
         }
@@ -53,7 +53,7 @@ const ParentDashboard = () => {
     <div>
       <PageHeader
         title="Panel de Familia"
-        subtitle={`Bienvenido, ${user?.first_name}. Aquí puedes ver a tus estudiantes y gestionar sus códigos QR.`}
+        subtitle={`Bienvenido, ${user?.first_name}. Aquí puedes ver a tus alumnos y gestionar sus códigos QR.`}
         keyboardShortcut="H"
       />
 
@@ -71,18 +71,18 @@ const ParentDashboard = () => {
         </div>
       ) : (
         <>
-          {/* Estudiantes asociados */}
+          {/* alumnos asociados */}
           <GlassCard className="mb-8">
             <div className="px-4 py-5 sm:px-6">
               <h3 className={`text-lg leading-6 font-medium ${
                 darkMode ? 'text-white' : 'text-gray-900'
               }`}>
-                Mis Estudiantes
+                Mis alumnos
               </h3>
               <p className={`mt-1 max-w-2xl text-sm ${
                 darkMode ? 'text-slate-300' : 'text-gray-500'
               }`}>
-                Estudiantes asociados a tu cuenta.
+                alumnos asociados a tu cuenta.
               </p>
             </div>
             <div className={`border-t ${
@@ -134,7 +134,7 @@ const ParentDashboard = () => {
                 <div className={`px-4 py-5 sm:px-6 text-center ${
                   darkMode ? 'text-slate-400' : 'text-gray-500'
                 }`}>
-                  No hay estudiantes asociados a tu cuenta.
+                  No hay alumnos asociados a tu cuenta.
                 </div>
               )}
             </div>

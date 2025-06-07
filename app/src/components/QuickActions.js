@@ -47,7 +47,7 @@ const QuickActions = () => {
         {
           icon: <FiRefreshCw className="h-4 w-4" />,
           label: 'Actualizar Lista',
-          description: 'Recargar estudiantes',
+          description: 'Recargar alumnos',
           action: () => {
             window.location.reload();
           }
@@ -117,7 +117,7 @@ const QuickActions = () => {
     return [
       {
         icon: <FiLogIn className="h-4 w-4" />,
-        label: 'Entrada Estudiantes',
+        label: 'Entrada alumnos',
         description: 'Registrar llegadas',
         action: () => {
           navigate('/app/entrada');
@@ -230,7 +230,7 @@ const QuickActions = () => {
 
   function getPageName() {
     const pathname = location.pathname;
-    if (pathname.includes('/entrada')) return 'Entrada de Estudiantes';
+    if (pathname.includes('/entrada')) return 'Entrada de alumnos';
     if (pathname.includes('/recogida')) return 'Coordinación de Recogida';
     if (pathname.includes('/maestros')) return 'Vista de Maestros';
     return 'Panel Principal';

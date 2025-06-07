@@ -1,3 +1,4 @@
+import notificationApi from '../services/notificationApi';
 import axiosClient from './axiosConfig';
 
 /**
@@ -31,17 +32,39 @@ export const NOTIFICATION_CATEGORIES = {
 };
 
 // Sound effects for notifications
+// Global audio context to be reused
+let audioContext = null;
+
+// Initialize audio context after user interaction
+export const initializeAudioContext = () => {
+  if (!audioContext) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      audioContext = new AudioContext();
+      // Resume context if it's suspended
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+  }
+  return audioContext;
+};
+
 export const playNotificationSound = (type = 'info') => {
   // Only play sounds if user hasn't disabled them
   const soundEnabled = localStorage.getItem('notificationSounds') !== 'false';
   if (!soundEnabled) return;
 
   try {
-    // Create audio context if needed
-    const audioContext = window.AudioContext || window.webkitAudioContext;
-    if (!audioContext) return;
-
-    const ctx = new audioContext();
+    // Use the global audio context or try to initialize it
+    const ctx = audioContext || initializeAudioContext();
+    if (!ctx) return;
+    
+    // If context is suspended, we can't play audio without user gesture
+    if (ctx.state === 'suspended') {
+      console.log('AudioContext suspended - audio requires user interaction');
+      return;
+    }
     
     // Different frequencies for different notification types
     const frequencies = {

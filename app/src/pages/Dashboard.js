@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axiosClient from '../utils/axiosConfig';
 import { useAuth } from '../hooks/useAuth';
@@ -9,9 +9,12 @@ import {
   FiCalendar, 
   FiArrowRight, 
   FiArrowLeft, 
+  FiLogIn,
   FiTrendingUp,
   FiTrendingDown,
   FiBarChart2,
+  FiPieChart,
+  FiActivity,
   FiClock,
   FiDownload,
   FiRefreshCw,
@@ -23,7 +26,7 @@ import {
 import PageLoader from '../components/PageLoader';
 import PageHeader from '../components/PageHeader';
 import PickupWorkflowDemo from '../components/PickupWorkflowDemo';
-import { mockGradeStats, getTotalStats } from '../data/mockData';
+import { mockGradeStats, getTotalStats } from '../mocks/mockData';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -71,7 +74,7 @@ const Dashboard = () => {
     };
   }, [selectedDate]);
 
-  const fetchDashboardStats = useCallback(async () => {
+  const fetchDashboardStats = async () => {
     try {
       setIsLoading(true);
       
@@ -115,7 +118,7 @@ const Dashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedDate, error, setStats, setIsLoading]);
+  };
 
   const handleRefresh = () => {
     fetchDashboardStats();
@@ -133,16 +136,16 @@ const Dashboard = () => {
         const summaryData = [
           'Tipo de Dato,Valor',
           `Fecha del Reporte,${selectedDate}`,
-          `Total de Estudiantes,${stats.totalStudents}`,
-          `Estudiantes Presentes,${stats.totalPresent}`,
-          `Estudiantes Ausentes,${stats.totalStudents - stats.totalPresent}`,
+          `Total de alumnos,${stats.totalStudents}`,
+          `alumnos Presentes,${stats.totalPresent}`,
+          `alumnos Ausentes,${stats.totalStudents - stats.totalPresent}`,
           `Entradas Registradas,${stats.totalEntries}`,
           `Salidas Registradas,${stats.totalExits}`,
           `Llegadas Tardías,${stats.lateArrivals}`,
           `Tasa de Asistencia Promedio,${stats.averageAttendance.toFixed(1)}%`,
           '',
           'Estadísticas por Grado',
-          'Grado,Total Estudiantes,Presentes,Tasa de Asistencia',
+          'Grado,Total alumnos,Presentes,Tasa de Asistencia',
           ...stats.gradeStats.map(grade => 
             `${grade.grade},${grade.totalStudents},${grade.present},${grade.attendanceRate.toFixed(1)}%`
           )
@@ -160,6 +163,7 @@ const Dashboard = () => {
         document.body.removeChild(link);
         
         success('Datos del dashboard exportados exitosamente');
+        info(`Archivo: dashboard_${exportDate}.csv`);
       }, 1500);
       
          } catch (error) {
@@ -257,7 +261,7 @@ const Dashboard = () => {
               <FiUsers className="h-6 w-6" />
             </div>
             <div className="stats-info">
-              <div className="stats-title">Total Estudiantes</div>
+              <div className="stats-title">Total alumnos</div>
               <div className="stats-value">{stats.totalStudents}</div>
               <div className="stats-subtitle">{stats.totalPresent} presentes hoy</div>
             </div>
@@ -434,10 +438,10 @@ const Dashboard = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                    Estudiantes aún en la escuela
+                    alumnos aún en la escuela
                   </p>
                   <p className="text-xs text-amber-600 dark:text-amber-300 mt-1">
-                    {stats.totalPresent - stats.totalExits} estudiantes no han registrado su salida después de las {schoolTimes.endTime}
+                    {stats.totalPresent - stats.totalExits} alumnos no han registrado su salida después de las {schoolTimes.endTime}
                   </p>
                   <Link 
                     to="/app/recogida" 
@@ -460,7 +464,7 @@ const Dashboard = () => {
                     Llegadas tardías registradas
                   </p>
                   <p className="text-xs text-orange-600 dark:text-orange-300 mt-1">
-                    {stats.lateArrivals} estudiantes llegaron después de las {schoolTimes.startTime}
+                    {stats.lateArrivals} alumnos llegaron después de las {schoolTimes.startTime}
                   </p>
                 </div>
               </div>
@@ -528,7 +532,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between p-3 glass-card-secondary rounded-lg">
               <div className="flex items-center space-x-3">
                 <FiUsers className="h-4 w-4 text-muted" />
-                <span className="text-sm font-medium text-secondary">Estudiantes aún en escuela</span>
+                <span className="text-sm font-medium text-secondary">alumnos aún en escuela</span>
               </div>
               <span className="text-sm font-semibold text-primary">
                 {stats.totalPresent - stats.totalExits}

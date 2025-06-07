@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axiosClient from '../utils/axiosConfig';
+// import axios from 'axios'; // Removed direct axios import
+import axiosClient from '../utils/axiosConfig'; // USE AXIOSCLIENT
+import { API_URL } from '../config/api'; // getAuthHeaders will not be needed with axiosClient
+import { toast } from 'react-hot-toast';
 import { 
+  FiMail, 
+  FiUser, 
   FiCheck, 
   FiAlertTriangle, 
   FiCopy, 
@@ -8,19 +13,29 @@ import {
   FiSend,
   FiTrash2,
   FiRefreshCw,
+  FiEye,
+  FiEyeOff,
   FiArrowRight,
   FiArrowLeft,
-  FiUsers
+  FiUsers,
+  FiShield,
+  FiCalendar,
+  FiClock,
+  FiX,
+  FiDownload,
+  FiFilter
 } from 'react-icons/fi';
 import { useTheme } from '../hooks/useTheme';
+import GlassCard from '../components/GlassCard';
 import PageLoader from '../components/PageLoader';
 import PageHeader from '../components/PageHeader';
 import { createPortal } from 'react-dom';
-import { allStudents, mockInvitations as centralizedInvitations } from '../data/mockData';
+import { allStudents, mockInvitations as centralizedInvitations } from '../mocks/mockData';
 import { LocalStorage } from '../utils/localStorage';
 import { useAuth } from '../hooks/useAuth'; // Import useAuth
 
 const InviteUsers = () => {
+  const { darkMode } = useTheme();
   const { user: authUser } = useAuth(); // Get the authenticated user
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
@@ -115,7 +130,7 @@ const InviteUsers = () => {
     if (step === 2) {
       if (formData.invitationType === 'guardian') {
         if (!formData.studentId) {
-          newErrors.studentId = 'Por favor selecciona un estudiante';
+          newErrors.studentId = 'Por favor selecciona un alumno';
         }
         if (!formData.relationshipType) {
           newErrors.relationshipType = 'Por favor especifica la relación';
@@ -478,14 +493,14 @@ const InviteUsers = () => {
                 <>
                   <div>
                     <label className="block text-sm font-medium text-secondary mb-2">
-                      Estudiante asociado *
+                      alumno asociado *
                     </label>
                     <select
                       value={formData.studentId}
                       onChange={(e) => handleInputChange('studentId', e.target.value)}
                       className={`glass-input ${errors.studentId ? 'border-red-500' : ''}`}
                     >
-                      <option value="">Seleccionar estudiante</option>
+                      <option value="">Seleccionar alumno</option>
                       {students.map(student => (
                         <option key={student.id} value={student.id}>
                           {student.name} - {student.grade} {student.group}
@@ -498,7 +513,7 @@ const InviteUsers = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-secondary mb-2">
-                      Relación con el estudiante *
+                      Relación con el alumno *
                     </label>
                     <select
                       value={formData.relationshipType}
@@ -602,7 +617,7 @@ const InviteUsers = () => {
                   {formData.invitationType === 'guardian' ? (
                     <>
                       <div className="flex justify-between">
-                        <span className="text-secondary">Estudiante:</span>
+                        <span className="text-secondary">alumno:</span>
                         <span className="text-primary font-medium">
                           {students.find(s => s.id === parseInt(formData.studentId))?.name}
                         </span>
@@ -713,7 +728,7 @@ const InviteUsers = () => {
                           </div>
                           {invitation.student_name && (
                             <div className="text-xs text-muted truncate max-w-xs">
-                              Estudiante: {invitation.student_name}
+                              alumno: {invitation.student_name}
                             </div>
                           )}
                           {invitation.position && (

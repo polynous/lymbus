@@ -10,4 +10,24 @@ qrcode==7.4.2
 pillow==10.1.0
 email-validator==2.1.0.post1
 pymysql==1.1.0
-cryptography==41.0.5 
+cryptography==41.0.5
+
+# Testing dependencies
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+pytest-cov==4.1.0
+faker==20.1.0
+
+# Additional security and compliance dependencies
+cryptography>=41.0.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Vulnerability scanning and security tools
+safety>=2.3.5
+bandit>=1.7.5
+
+# Additional compliance and audit tools
+schedule>=1.2.0
+reportlab>=4.0.4 

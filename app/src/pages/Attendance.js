@@ -56,12 +56,12 @@ const Attendance = () => {
         if (response.data && response.data.length > 0) {
           setSelectedStudent(response.data[0]); 
         } else {
-          info('No se encontraron estudiantes para mostrar asistencia.');
+          info('No se encontraron alumnos para mostrar asistencia.');
           setSelectedStudent(null);
         }
       } catch (err) {
         console.error('Error fetching students:', err);
-        error(err.response?.data?.detail || 'Error al cargar lista de estudiantes.');
+        error(err.response?.data?.detail || 'Error al cargar lista de alumnos.');
         setStudents([]);
         setSelectedStudent(null);
       } finally {
@@ -228,7 +228,7 @@ const Attendance = () => {
       } else {
         setSelectedStudent(null);
         setAttendanceData([]); // Clear attendance if no students
-        info('No se encontraron estudiantes.');
+        info('No se encontraron alumnos.');
       }
       success('Datos actualizados.');
     } catch (err) {
@@ -319,7 +319,7 @@ const Attendance = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-secondary mb-2">
-              Estudiante
+              alumno
             </label>
             <select
               value={selectedStudent?.id || ''}
@@ -328,9 +328,9 @@ const Attendance = () => {
               disabled={isLoadingStudents || students.length === 0}
             >
               {isLoadingStudents ? (
-                <option>Cargando estudiantes...</option>
+                <option>Cargando alumnos...</option>
               ) : students.length === 0 ? (
-                <option>No hay estudiantes</option>
+                <option>No hay alumnos</option>
               ) : (
                 students.map(student => (
                   <option key={student.id} value={student.id}>
@@ -488,7 +488,7 @@ const Attendance = () => {
               <p className="text-secondary">
                 {selectedStudent 
                   ? `No se encontraron registros para ${selectedStudent.name} con los filtros aplicados.`
-                  : 'Selecciona un estudiante para ver su asistencia.'
+                  : 'Selecciona un alumno para ver su asistencia.'
                 }
               </p>
             </div>

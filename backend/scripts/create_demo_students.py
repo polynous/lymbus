@@ -33,12 +33,12 @@ def generar_matricula(db: Session):
     while True:
         matricula = f"A{random.randint(10000, 99999)}"
         # Verificar que la matrícula no exista ya
-        estudiante_existente = db.query(Student).filter_by(enrollment_id=matricula).first()
-        if not estudiante_existente:
+        alumno_existente = db.query(Student).filter_by(enrollment_id=matricula).first()
+        if not alumno_existente:
             return matricula
 
-def eliminar_estudiantes_existentes(db: Session):
-    """Elimina todos los estudiantes existentes en la base de datos"""
+def eliminar_alumnos_existentes(db: Session):
+    """Elimina todos los alumnos existentes en la base de datos"""
     num_eliminados = db.query(Student).delete()
     db.commit()
     return num_eliminados
@@ -84,40 +84,40 @@ def crear_salones(db: Session, escuela_id: int):
     db.commit()
     return salones
 
-def crear_estudiantes(db: Session, salones):
-    """Crea al menos 50 estudiantes distribuidos en diferentes grados y grupos"""
-    estudiantes_creados = 0
-    estudiantes_por_salon = {}
+def crear_alumnos(db: Session, salones):
+    """Crea al menos 50 alumnos distribuidos en diferentes grados y grupos"""
+    alumnos_creados = 0
+    alumnos_por_salon = {}
     
-    # Distribuir aprox. 3-4 estudiantes por salón para tener al menos 50 en total
+    # Distribuir aprox. 3-4 alumnos por salón para tener al menos 50 en total
     for grado, lista_salones in salones.items():
         for salon in lista_salones:
-            # Entre 3 y 4 estudiantes por salón
-            num_estudiantes = random.randint(3, 4)
-            estudiantes_por_salon[salon.id] = num_estudiantes
+            # Entre 3 y 4 alumnos por salón
+            num_alumnos = random.randint(3, 4)
+            alumnos_por_salon[salon.id] = num_alumnos
     
-    # Asegurarse de que haya al menos 50 estudiantes en total
-    total_estudiantes = sum(estudiantes_por_salon.values())
-    if total_estudiantes < 50:
-        # Agregar estudiantes adicionales aleatoriamente
-        estudiantes_adicionales = 50 - total_estudiantes
-        salon_ids = list(estudiantes_por_salon.keys())
-        for _ in range(estudiantes_adicionales):
+    # Asegurarse de que haya al menos 50 alumnos en total
+    total_alumnos = sum(alumnos_por_salon.values())
+    if total_alumnos < 50:
+        # Agregar alumnos adicionales aleatoriamente
+        alumnos_adicionales = 50 - total_alumnos
+        salon_ids = list(alumnos_por_salon.keys())
+        for _ in range(alumnos_adicionales):
             salon_id = random.choice(salon_ids)
-            estudiantes_por_salon[salon_id] = estudiantes_por_salon[salon_id] + 1
+            alumnos_por_salon[salon_id] = alumnos_por_salon[salon_id] + 1
     
-    # Crear los estudiantes
-    for salon_id, num_estudiantes in estudiantes_por_salon.items():
+    # Crear los alumnos
+    for salon_id, num_alumnos in alumnos_por_salon.items():
         salon = db.query(Classroom).filter_by(id=salon_id).first()
-        for _ in range(num_estudiantes):
-            # Generar datos del estudiante
+        for _ in range(num_alumnos):
+            # Generar datos del alumno
             nombre = random.choice(nombres)
             apellido_paterno = random.choice(apellidos)
             apellido_materno = random.choice(apellidos)
             fecha_nacimiento = datetime.now() - timedelta(days=365 * random.randint(5, 18))
             genero = random.choice(["M", "F"])
             
-            estudiante = Student(
+            alumno = Student(
                 first_name=nombre,
                 last_name=f"{apellido_paterno} {apellido_materno}",
                 enrollment_id=generar_matricula(db),
@@ -125,21 +125,21 @@ def crear_estudiantes(db: Session, salones):
                 gender=genero,
                 classroom_id=salon_id,
                 school_id=salon.school_id,
-                medical_notes=f"Estudiante de {salon.name}"
+                medical_notes=f"alumno de {salon.name}"
             )
-            db.add(estudiante)
-            estudiantes_creados += 1
+            db.add(alumno)
+            alumnos_creados += 1
     
     db.commit()
-    return estudiantes_creados
+    return alumnos_creados
 
 def main():
     db = SessionLocal()
     try:
-        # Eliminar estudiantes existentes
-        num_eliminados = eliminar_estudiantes_existentes(db)
+        # Eliminar alumnos existentes
+        num_eliminados = eliminar_alumnos_existentes(db)
         if num_eliminados > 0:
-            print(f"Se han eliminado {num_eliminados} estudiantes existentes.")
+            print(f"Se han eliminado {num_eliminados} alumnos existentes.")
         
         # Crear la escuela si no existe
         escuela = crear_escuela_si_no_existe(db)
@@ -147,25 +147,25 @@ def main():
         # Crear salones para cada grado y grupo
         salones = crear_salones(db, escuela.id)
         
-        # Crear estudiantes
-        num_estudiantes = crear_estudiantes(db, salones)
+        # Crear alumnos
+        num_alumnos = crear_alumnos(db, salones)
         
-        print(f"Se han creado {num_estudiantes} estudiantes correctamente.")
+        print(f"Se han creado {num_alumnos} alumnos correctamente.")
         
-        # Listar algunos estudiantes como muestra
-        estudiantes = db.query(Student).limit(10).all()
-        print("\nMuestra de estudiantes creados:")
-        for estudiante in estudiantes:
-            salon = db.query(Classroom).filter_by(id=estudiante.classroom_id).first()
-            print(f"ID: {estudiante.id}, Nombre: {estudiante.first_name} {estudiante.last_name}, Matrícula: {estudiante.enrollment_id}, Salón: {salon.name}")
+        # Listar algunos alumnos como muestra
+        alumnos = db.query(Student).limit(10).all()
+        print("\nMuestra de alumnos creados:")
+        for alumno in alumnos:
+            salon = db.query(Classroom).filter_by(id=alumno.classroom_id).first()
+            print(f"ID: {alumno.id}, Nombre: {alumno.first_name} {alumno.last_name}, Matrícula: {alumno.enrollment_id}, Salón: {salon.name}")
         
         # Mostrar total por grado y grupo
-        print("\nDistribución de estudiantes por salón:")
-        salones_con_estudiantes = db.query(Classroom).all()
-        for salon in salones_con_estudiantes:
+        print("\nDistribución de alumnos por salón:")
+        salones_con_alumnos = db.query(Classroom).all()
+        for salon in salones_con_alumnos:
             count = db.query(Student).filter_by(classroom_id=salon.id).count()
             if count > 0:
-                print(f"Salón: {salon.name} - {count} estudiantes")
+                print(f"Salón: {salon.name} - {count} alumnos")
         
     finally:
         db.close()

@@ -84,7 +84,7 @@ const EnhancedQRScanner = ({
         // Ensure we have some form of student identifier
         if (!parsedData.id && !parsedData.raw) {
           console.warn('❌ No student identifier found');
-          error('Código QR no contiene información de estudiante válida');
+          error('Código QR no contiene información de alumno válida');
           return;
         }
       }
@@ -233,7 +233,7 @@ const EnhancedQRScanner = ({
                <div className="mb-6">
                  <div className="mb-4">
                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                     Código QR o ID del Estudiante
+                     Código QR o ID del alumno
                    </label>
                    <input
                      type="text"
@@ -312,8 +312,8 @@ const EnhancedQRScanner = ({
             <div className="text-center">
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                 {showManualInput 
-                  ? 'Introduce el código QR completo o simplemente el ID del estudiante.'
-                  : 'Apunta la cámara hacia el código QR del estudiante.'
+                  ? 'Introduce el código QR completo o simplemente el ID del alumno.'
+                  : 'Apunta la cámara hacia el código QR del alumno.'
                 }
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-500">

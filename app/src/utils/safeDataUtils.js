@@ -3,11 +3,20 @@
  * Specifically targets objects with signature matching error objects (type, loc, msg, input, url)
  * 
  * @param {any} data - Data to sanitize
+ * @param {WeakSet} visited - Set to track visited objects and prevent circular references
  * @returns {any} - Sanitized data safe for React rendering
  */
-export const sanitizeData = (data) => {
+export const sanitizeData = (data, visited = new WeakSet()) => {
   if (data === null || data === undefined) {
     return data;
+  }
+
+  // Handle circular references
+  if (typeof data === 'object' && data !== null) {
+    if (visited.has(data)) {
+      return '[Circular Reference]';
+    }
+    visited.add(data);
   }
 
   // Check if this is a potential error object
@@ -18,7 +27,7 @@ export const sanitizeData = (data) => {
     data.type && 
     data.loc && 
     data.msg && 
-    data.input
+    'input' in data  // Check for property existence instead of truthy value
   ) {
     // Convert error object to string
     return `Error: ${data.msg}`;
@@ -26,7 +35,7 @@ export const sanitizeData = (data) => {
 
   // Handle arrays
   if (Array.isArray(data)) {
-    return data.map(item => sanitizeData(item));
+    return data.map(item => sanitizeData(item, visited));
   }
 
   // Handle plain objects
@@ -34,7 +43,7 @@ export const sanitizeData = (data) => {
     const result = {};
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
-        result[key] = sanitizeData(data[key]);
+        result[key] = sanitizeData(data[key], visited);
       }
     }
     return result;

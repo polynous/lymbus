@@ -5,6 +5,7 @@ from ..models.notification import Notification
 from ..models.user import User
 from ..schemas.notification import NotificationCreate, NotificationUpdate
 from datetime import datetime, timedelta
+import json
 
 class NotificationService:
     def __init__(self, db: Session):
@@ -16,7 +17,54 @@ class NotificationService:
         self.db.add(notification)
         self.db.commit()
         self.db.refresh(notification)
+        
+        # Broadcast real-time notification
+        self._broadcast_notification(notification)
+        
         return notification
+    
+    def _broadcast_notification(self, notification: Notification):
+        """Broadcast notification via WebSocket"""
+        try:
+            # Import here to avoid circular imports
+            from ..main import manager
+            
+            notification_data = {
+                "id": notification.id,
+                "title": notification.title,
+                "message": notification.message,
+                "type": notification.type,
+                "read": notification.read,
+                "user_id": notification.user_id,
+                "created_at": notification.created_at.isoformat()
+            }
+            
+            # Create the message to broadcast
+            message = json.dumps({
+                "type": "notification",
+                "data": notification_data,
+                "timestamp": datetime.utcnow().isoformat()
+            })
+            
+            # Use asyncio to send the message
+            import asyncio
+            
+            # If there's a running event loop, schedule the broadcast
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # Schedule the broadcast as a task
+                    asyncio.create_task(manager.broadcast(message))
+                else:
+                    # Run the broadcast in a new event loop
+                    asyncio.run(manager.broadcast(message))
+            except RuntimeError:
+                # No event loop running, create one
+                asyncio.run(manager.broadcast(message))
+                
+        except Exception as e:
+            # Don't let broadcasting errors affect notification creation
+            print(f"Error broadcasting notification: {e}")
     
     def get_user_notifications(self, user_id: int, limit: int = 50, offset: int = 0) -> List[Notification]:
         """Get notifications for a specific user, ordered by newest first"""

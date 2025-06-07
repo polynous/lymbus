@@ -126,7 +126,7 @@ const PickupCoordination = ({ role = 'staff' }) => {
       loadPickupData();
     } catch (err) {
       console.error('Error requesting student:', err);
-      error(err.response?.data?.detail || 'Error al solicitar estudiante.');
+      error(err.response?.data?.detail || 'Error al solicitar alumno.');
     } finally {
       setIsLoading(false);
     }
@@ -152,11 +152,11 @@ const PickupCoordination = ({ role = 'staff' }) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       console.log(`Simulating sending student ${studentId} to exit point ${exitPoint}`);
-      success(`Estudiante enviado a la salida ${exitPoint}`);
+      success(`alumno enviado a la salida ${exitPoint}`);
       loadPickupData();
     } catch (err) {
       console.error('Error sending student to exit:', err);
-      error(err.response?.data?.detail || 'Error al enviar estudiante a salida.');
+      error(err.response?.data?.detail || 'Error al enviar alumno a salida.');
     } finally {
       setIsLoading(false);
     }
@@ -183,7 +183,7 @@ const PickupCoordination = ({ role = 'staff' }) => {
       {/* Header */}
       <PageHeader 
         title={role === 'teacher' ? 'Gestión de Grupo - Recogida' : 'Coordinación de Recogida'}
-        subtitle={role === 'teacher' ? 'Administra las solicitudes de recogida de tu grupo actual' : 'Coordina las llegadas de padres y la recogida de estudiantes'}
+        subtitle={role === 'teacher' ? 'Administra las solicitudes de recogida de tu grupo actual' : 'Coordina las llegadas de padres y la recogida de alumnos'}
         keyboardShortcut="P"
       >
         <div className="flex items-center space-x-3">
@@ -404,7 +404,7 @@ const ArrivalsTab = ({ arrivals, onRegisterArrival, onRequestStudent }) => (
                   <h4 className="font-semibold text-primary">{arrival.parent_name}</h4>
                   <p className="text-sm text-secondary">{arrival.parent_phone}</p>
                   <p className="text-xs text-muted">
-                    Estudiantes: {arrival.student_names.join(', ')}
+                    alumnos: {arrival.student_names.join(', ')}
                   </p>
                 </div>
               </div>
@@ -440,7 +440,7 @@ const QueueTab = ({ queue, onCompletePickup }) => (
     {queue.length === 0 ? (
       <div className="text-center py-12">
         <FiClock className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-        <p className="text-slate-500">No hay estudiantes en cola</p>
+        <p className="text-slate-500">No hay alumnos en cola</p>
       </div>
     ) : (
       <div className="space-y-4">
@@ -563,7 +563,7 @@ const RosterTab = ({ group }) => (
     
     <div className="text-center py-12">
       <FiUsers className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-      <p className="text-slate-500">Lista de estudiantes del grupo {group}</p>
+      <p className="text-slate-500">Lista de alumnos del grupo {group}</p>
     </div>
   </div>
 );

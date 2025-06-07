@@ -143,7 +143,7 @@ def complete_registration(
             address="",  # Se puede completar después
         )
         db.add(guardian)
-        # Si hay un estudiante asociado, relacionarlo
+        # Si hay un alumno asociado, relacionarlo
         if invitation.student_id:
             from app.models import Student
             student = db.query(Student).filter(Student.id == invitation.student_id).first()

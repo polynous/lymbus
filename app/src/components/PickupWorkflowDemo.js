@@ -56,8 +56,8 @@ const PickupWorkflowDemo = () => {
     },
     {
       id: 2,
-      title: 'Localización de Estudiante',
-      description: 'Se localiza al estudiante en el aula correspondiente',
+      title: 'Localización de alumno',
+      description: 'Se localiza al alumno en el aula correspondiente',
       icon: FiMapPin,
       color: 'purple',
       duration: 4000,
@@ -66,7 +66,7 @@ const PickupWorkflowDemo = () => {
     {
       id: 3,
       title: 'Notificación a Maestro',
-      description: 'Se notifica al maestro para preparar al estudiante',
+      description: 'Se notifica al maestro para preparar al alumno',
       icon: FiSend,
       color: 'teal',
       duration: 2500,
@@ -74,8 +74,8 @@ const PickupWorkflowDemo = () => {
     },
     {
       id: 4,
-      title: 'Preparación de Estudiante',
-      description: 'El maestro prepara al estudiante para la salida',
+      title: 'Preparación de alumno',
+      description: 'El maestro prepara al alumno para la salida',
       icon: FiUsers,
       color: 'green',
       duration: 3500,
@@ -84,7 +84,7 @@ const PickupWorkflowDemo = () => {
     {
       id: 5,
       title: 'Traslado a Punto de Recogida',
-      description: 'El estudiante es trasladado al área de recogida',
+      description: 'El alumno es trasladado al área de recogida',
       icon: FiTruck,
       color: 'indigo',
       duration: 2000,
@@ -92,8 +92,8 @@ const PickupWorkflowDemo = () => {
     },
     {
       id: 6,
-      title: 'Entrega del Estudiante',
-      description: 'Se realiza la entrega segura del estudiante',
+      title: 'Entrega del alumno',
+      description: 'Se realiza la entrega segura del alumno',
       icon: FiCheckCircle,
       color: 'emerald',
       duration: 1500,
@@ -138,7 +138,7 @@ const PickupWorkflowDemo = () => {
     setStudentsInQueue(prev => prev.map(student => 
       student.currentStep === 1 ? { ...student, currentStep: 2 } : student
     ));
-    info('Estudiante localizado en el aula');
+    info('alumno localizado en el aula');
   }, [info]);
 
   const notifyTeacher = useCallback(() => {
@@ -152,14 +152,14 @@ const PickupWorkflowDemo = () => {
     setStudentsInQueue(prev => prev.map(student => 
       student.currentStep === 3 ? { ...student, currentStep: 4 } : student
     ));
-    info('Estudiante preparado para la salida');
+    info('alumno preparado para la salida');
   }, [info]);
 
   const moveToPickupArea = useCallback(() => {
     setStudentsInQueue(prev => prev.map(student => 
       student.currentStep === 4 ? { ...student, currentStep: 5 } : student
     ));
-    info('Estudiante en camino al punto de recogida');
+    info('alumno en camino al punto de recogida');
   }, [info]);
 
   const completePickup = useCallback(() => {

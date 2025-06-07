@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+// import axios from 'axios'; // To be removed
+// import { API_URL, getAuthHeaders } from '../config/api'; // To be removed
+import axiosClient from '../utils/axiosConfig'; // Added
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../components/NotificationSystem';
 import { 
@@ -12,21 +15,29 @@ import {
   FiEyeOff,
   FiCheck,
   FiAlertTriangle,
+  FiRefreshCw,
+  FiMoon,
+  FiSun,
+  FiGlobe,
   FiMail,
   FiPhone,
   FiHome,
+  FiKey,
   FiDatabase,
   FiDownload,
   FiTrash2,
   FiInfo,
-  FiMoon
+  FiTestTube,
+  FiZap,
+  FiPlay
 } from 'react-icons/fi';
+import notificationManager from '../services/notificationManager';
 import PageLoader from '../components/PageLoader';
 import PageHeader from '../components/PageHeader';
 
 const Settings = () => {
   const { user, setUser } = useAuth();
-  const { success, error } = useNotification();
+  const { success, error, warning, info } = useNotification();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [isSaving, setIsSaving] = useState(false);
@@ -155,6 +166,60 @@ const Settings = () => {
 
   const handleSystemChange = (setting, value) => {
     setSystemSettings(prev => ({ ...prev, [setting]: value }));
+  };
+
+  const testNotification = async (type) => {
+    const testMessages = {
+      success: {
+        title: 'Prueba exitosa',
+        message: 'Las notificaciones de éxito funcionan correctamente',
+        type: 'success'
+      },
+      error: {
+        title: 'Prueba de error',
+        message: 'Las notificaciones de error funcionan correctamente',
+        type: 'error'
+      },
+      warning: {
+        title: 'Prueba de advertencia',
+        message: 'Las notificaciones de advertencia funcionan correctamente',
+        type: 'warning'
+      },
+      info: {
+        title: 'Prueba informativa',
+        message: 'Las notificaciones informativas funcionan correctamente',
+        type: 'info'
+      },
+      realtime: {
+        title: 'Notificación en tiempo real',
+        message: 'Esta es una prueba del sistema de notificaciones en tiempo real',
+        type: 'info'
+      }
+    };
+
+    const testData = testMessages[type];
+    
+    if (type === 'realtime') {
+      // Test the real-time notification system
+      await notificationManager.sendTestNotification();
+      info('Notificación en tiempo real enviada');
+    } else {
+      // Test UI notifications directly
+      switch (type) {
+        case 'success':
+          success(testData.message, { title: testData.title });
+          break;
+        case 'error':
+          error(testData.message, { title: testData.title });
+          break;
+        case 'warning':
+          warning(testData.message, { title: testData.title });
+          break;
+        case 'info':
+          info(testData.message, { title: testData.title });
+          break;
+      }
+    }
   };
 
   const saveSettings = async (section) => {
@@ -684,6 +749,46 @@ const Settings = () => {
                         </label>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                <div className="border-t border-white/10 dark:border-slate-700/30 pt-6">
+                  <h3 className="text-lg font-semibold text-primary mb-4">Probar Notificaciones</h3>
+                  <p className="text-sm text-secondary mb-4">
+                    Prueba los diferentes tipos de notificaciones para verificar que funcionan correctamente
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {[
+                      { type: 'success', label: 'Éxito', color: 'bg-emerald-500 hover:bg-emerald-600' },
+                      { type: 'error', label: 'Error', color: 'bg-red-500 hover:bg-red-600' },
+                      { type: 'warning', label: 'Advertencia', color: 'bg-amber-500 hover:bg-amber-600' },
+                      { type: 'info', label: 'Información', color: 'bg-blue-500 hover:bg-blue-600' },
+                      { type: 'realtime', label: 'Tiempo Real', color: 'bg-purple-500 hover:bg-purple-600' }
+                    ].map(item => (
+                      <button
+                        key={item.type}
+                        onClick={() => testNotification(item.type)}
+                        className={`${item.color} text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 text-sm font-medium`}
+                      >
+                        <FiPlay className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div className="flex items-start space-x-2">
+                      <FiInfo className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-blue-800 dark:text-blue-300">
+                        <p className="font-medium mb-1">Sobre las pruebas:</p>
+                        <ul className="text-xs space-y-1 text-blue-700 dark:text-blue-400">
+                          <li>• Las notificaciones UI aparecen en la esquina superior derecha</li>
+                          <li>• Las notificaciones de escritorio requieren permisos del navegador</li>
+                          <li>• Las notificaciones en tiempo real prueban el sistema WebSocket completo</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

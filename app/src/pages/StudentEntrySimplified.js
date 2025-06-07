@@ -110,7 +110,7 @@ const StudentEntry = () => {
     <div className="space-y-6">
       <PageHeader
         title="Control de Entrada"
-        subtitle="Gestión de entradas y salidas de estudiantes"
+        subtitle="Gestión de entradas y salidas de alumnos"
         icon={FiUsers}
         actions={[
           {

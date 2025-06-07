@@ -1,54 +1,46 @@
-import sys
-import os
-from passlib.context import CryptContext
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models.user import User, Staff
+from app.services.auth import get_password_hash
 
-# Añadir el directorio raíz al path para importar los módulos de la aplicación
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from app.models.base import SessionLocal
-from app.models import User, Staff
-
-# Configuración para hash de contraseñas
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def create_admin():
+def create_admin_user():
+    """Create an admin user for testing purposes"""
     db = SessionLocal()
     try:
-        # Verificar si ya existe un admin
-        admin = db.query(User).filter_by(email="admin@lymbus.com").first()
+        # Check if admin exists
+        admin = db.query(User).filter(User.email == "admin@example.com").first()
         
         if admin:
-            print("El usuario administrador ya existe.")
+            print(f"Admin user already exists: {admin.email}")
             return
         
-        # Hash de la contraseña
-        hashed_password = pwd_context.hash("admin123")
-        
-        # Crear el usuario admin
+        # Create admin user
+        print("Creating admin user...")
         admin = User(
-            email="admin@lymbus.com",
-            hashed_password=hashed_password,
+            email="admin@example.com",
+            hashed_password=get_password_hash("password"),
             first_name="Admin",
-            last_name="Lymbus",
+            last_name="User",
             is_active=True,
             is_admin=True
         )
         db.add(admin)
-        db.flush()  # Para obtener el ID
+        db.commit()
+        db.refresh(admin)
         
-        # Crear el perfil de staff
+        # Create staff profile
         staff = Staff(
             user_id=admin.id,
-            position="Director",
-            department="Administración"
+            position="Administrator",
+            department="IT"
         )
         db.add(staff)
-        
         db.commit()
-        print("Usuario administrador creado correctamente.")
         
+        print(f"✅ Admin user created successfully: {admin.email}")
+    
     finally:
         db.close()
 
 if __name__ == "__main__":
-    create_admin() 
+    create_admin_user() 

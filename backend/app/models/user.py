@@ -57,7 +57,7 @@ class Guardian(Base):
     students = relationship("Student", secondary="guardian_student", back_populates="guardians")
     qr_codes = relationship("QRCode", back_populates="guardian")
 
-# Tabla de relación entre tutores y estudiantes
+# Tabla de relación entre tutores y alumnos
 guardian_student = Table(
     "guardian_student",
     Base.metadata,

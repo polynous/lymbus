@@ -98,7 +98,7 @@ const useKeyboardShortcuts = () => {
                       <kbd class="kbd">Ctrl + H</kbd>
                     </div>
                     <div class="flex justify-between items-center p-3 glass-card-secondary rounded-lg">
-                      <span class="text-secondary text-sm">Entrada de Estudiantes</span>
+                      <span class="text-secondary text-sm">Entrada de alumnos</span>
                       <kbd class="kbd">Ctrl + E</kbd>
                     </div>
                     <div class="flex justify-between items-center p-3 glass-card-secondary rounded-lg">

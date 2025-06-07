@@ -13,11 +13,11 @@ def generate_unique_code():
 
 def create_qr_code(guardian_id: int, student_id: int, expiration_days: int = 30, db: Session = None) -> QRCode:
     """
-    Crea un nuevo código QR para un tutor y un estudiante específico.
+    Crea un nuevo código QR para un tutor y un alumno específico.
     
     Args:
         guardian_id: ID del tutor
-        student_id: ID del estudiante
+        student_id: ID del alumno
         expiration_days: Días hasta la expiración del código
         db: Sesión de base de datos
         
@@ -29,10 +29,10 @@ def create_qr_code(guardian_id: int, student_id: int, expiration_days: int = 30,
     if not guardian:
         raise ValueError(f"No se encontró un tutor con ID {guardian_id}")
     
-    # Verificar que el estudiante existe
+    # Verificar que el alumno existe
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
-        raise ValueError(f"No se encontró un estudiante con ID {student_id}")
+        raise ValueError(f"No se encontró un alumno con ID {student_id}")
     
     # Generar código único
     unique_code = generate_unique_code()

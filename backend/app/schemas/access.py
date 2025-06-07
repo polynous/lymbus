@@ -78,7 +78,7 @@ class StudentCheckoutResponse(BaseModel):
     message: str
     access_log_id: Optional[int] = None
 
-# Esquemas para búsqueda de estudiantes
+# Esquemas para búsqueda de alumnos
 class GuardianInfo(BaseModel):
     id: int
     first_name: str

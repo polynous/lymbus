@@ -36,11 +36,11 @@ apellidos = [
 def crear_tutores():
     db = SessionLocal()
     try:
-        # Obtener todos los estudiantes
-        estudiantes = db.query(Student).all()
+        # Obtener todos los alumnos
+        alumnos = db.query(Student).all()
         
-        if not estudiantes:
-            print("No hay estudiantes en la base de datos.")
+        if not alumnos:
+            print("No hay alumnos en la base de datos.")
             return
         
         tutores_creados = 0
@@ -49,12 +49,12 @@ def crear_tutores():
         # Crear un padre y una madre para cada grupo familiar (apellido)
         familias = {}
         
-        # Agrupar estudiantes por apellido
-        for estudiante in estudiantes:
-            apellido = estudiante.last_name.split()[0]  # Tomamos el primer apellido
+        # Agrupar alumnos por apellido
+        for alumno in alumnos:
+            apellido = alumno.last_name.split()[0]  # Tomamos el primer apellido
             if apellido not in familias:
                 familias[apellido] = []
-            familias[apellido].append(estudiante)
+            familias[apellido].append(alumno)
         
         # Crear tutores para cada familia
         for apellido, hijos in familias.items():
@@ -119,7 +119,7 @@ def crear_tutores():
             db.add(guardian_madre)
             db.flush()
             
-            # Asociar tutores con estudiantes
+            # Asociar tutores con alumnos
             for hijo in hijos:
                 # Insertar relación padre-hijo
                 db.execute(
@@ -140,14 +140,14 @@ def crear_tutores():
             tutores_creados += 2  # Padre y madre
         
         db.commit()
-        print(f"Se han creado {tutores_creados} tutores para {len(estudiantes)} estudiantes.")
+        print(f"Se han creado {tutores_creados} tutores para {len(alumnos)} alumnos.")
         
         # Mostrar algunos tutores de ejemplo
         tutores = db.query(Guardian).join(User).limit(5).all()
         print("\nMuestra de tutores creados:")
         for tutor in tutores:
-            estudiantes_del_tutor = db.query(Student).join(guardian_student).filter(guardian_student.c.guardian_id == tutor.id).all()
-            hijos_str = ", ".join([estudiante.first_name for estudiante in estudiantes_del_tutor])
+            alumnos_del_tutor = db.query(Student).join(guardian_student).filter(guardian_student.c.guardian_id == tutor.id).all()
+            hijos_str = ", ".join([alumno.first_name for alumno in alumnos_del_tutor])
             print(f"ID: {tutor.id}, Nombre: {tutor.user.first_name} {tutor.user.last_name}, Relación: {tutor.relationship_type}, Hijos: {hijos_str}")
         
     finally:

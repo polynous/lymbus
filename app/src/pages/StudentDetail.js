@@ -54,7 +54,7 @@ const StudentDetail = () => {
       setStudent(studentData);
     } catch (err) {
       console.error('Error fetching student detail:', err);
-      error('Error al cargar los detalles del estudiante');
+      error('Error al cargar los detalles del alumno');
       // Consider navigating to a more generic error page or parent dashboard if student not found for this user
       // navigate('/app'); 
     } finally {
@@ -158,7 +158,7 @@ const StudentDetail = () => {
       try {
         await navigator.share({
           title: `${student.full_name} - Lymbus`,
-          text: `Información del estudiante ${student.full_name} (ID: ${student.id})`,
+          text: `Información del alumno ${student.full_name} (ID: ${student.id})`,
           url: window.location.href
         });
         success('Información compartida');
@@ -180,7 +180,7 @@ const StudentDetail = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <LoadingSpinner size="lg" text="Cargando detalles del estudiante..." />
+        <LoadingSpinner size="lg" text="Cargando detalles del alumno..." />
       </div>
     );
   }
@@ -189,7 +189,7 @@ const StudentDetail = () => {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-slate-600 dark:text-slate-400 mb-4">
-          Estudiante no encontrado
+          alumno no encontrado
         </h2>
         <button
           onClick={() => navigate('/app')}
@@ -218,7 +218,7 @@ const StudentDetail = () => {
               {student.full_name}
             </h1>
             <p className="text-slate-600 dark:text-slate-400">
-              Detalles del estudiante
+              Detalles del alumno
             </p>
           </div>
         </div>
@@ -266,7 +266,7 @@ const StudentDetail = () => {
                 
                 <div>
                   <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    ID del Estudiante
+                    ID del alumno
                   </label>
                   <p className="text-slate-900 dark:text-slate-100 font-mono">
                     {student.id}

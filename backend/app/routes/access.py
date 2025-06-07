@@ -38,9 +38,9 @@ async def search_students(
     current_user: User = Depends(get_current_active_user)
 ):
     """
-    Busca estudiantes por nombre o ID, opcionalmente filtrando por estado de presencia.
+    Busca alumnos por nombre o ID, opcionalmente filtrando por estado de presencia.
     Si no se proporciona un término de búsqueda pero se especifica status=present,
-    se devolverán todos los estudiantes presentes.
+    se devolverán todos los alumnos presentes.
     """
     # Base query
     students_query = db.query(Student)
@@ -87,7 +87,7 @@ async def search_students(
             )
             
         elif status.lower() == 'absent':
-            # Subconsulta para obtener IDs de estudiantes con entrada hoy
+            # Subconsulta para obtener IDs de alumnos con entrada hoy
             present_student_ids = db.query(AccessLogModel.student_id).filter(
                 AccessLogModel.access_type == AccessType.ENTRADA,
                 AccessLogModel.timestamp >= today,
@@ -95,16 +95,16 @@ async def search_students(
             ).all()
             present_student_ids = [id[0] for id in present_student_ids]
             
-            # Filtrar solo estudiantes ausentes
+            # Filtrar solo alumnos ausentes
             students_query = students_query.filter(~Student.id.in_(present_student_ids))
     
     # Obtener los resultados
     students = students_query.all()
     
-    # Preparar respuesta con los tutores de cada estudiante
+    # Preparar respuesta con los tutores de cada alumno
     results = []
     for student in students:
-        # Obtener tutores asociados a este estudiante
+        # Obtener tutores asociados a este alumno
         guardians = []
         for guardian in student.guardians:
             guardian_data = {
@@ -115,7 +115,7 @@ async def search_students(
             }
             guardians.append(guardian_data)
         
-        # Crear objeto de estudiante con sus tutores
+        # Crear objeto de alumno con sus tutores
         student_data = {
             "id": student.id,
             "first_name": student.first_name,
@@ -130,7 +130,7 @@ async def search_students(
                 student_data["grade_level"] = {"name": student.classroom.grade_level.value}
         except (AttributeError, TypeError, LookupError) as e:
             # Log error but continue without failing
-            print(f"Error al obtener grade_level para estudiante {student.id}: {str(e)}")
+            print(f"Error al obtener grade_level para alumno {student.id}: {str(e)}")
         
         # Add guardians
         student_data["guardians"] = guardians
@@ -144,7 +144,7 @@ async def checkout_student(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Procesa la salida de un estudiante."""
+    """Procesa la salida de un alumno."""
     return process_student_checkout(request, db)
 
 @router.post("/entry/{student_id}", response_model=AccessLogSchema)
@@ -153,7 +153,7 @@ async def register_entry(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Registra la entrada de un estudiante."""
+    """Registra la entrada de un alumno."""
     success, message, access_log = register_student_entry(
         student_id=student_id,
         access_type=AccessType.ENTRADA,
@@ -179,7 +179,7 @@ async def get_student_logs(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtiene los registros de acceso de un estudiante."""
+    """Obtiene los registros de acceso de un alumno."""
     return get_student_access_logs(student_id, limit, db)
 
 @router.post("/qrcode/generate/{guardian_id}", response_model=dict)
@@ -211,7 +211,7 @@ async def get_present_students(
     current_user: User = Depends(get_current_active_user)
 ):
     """
-    Obtiene la lista de estudiantes presentes en una fecha determinada.
+    Obtiene la lista de alumnos presentes en una fecha determinada.
     """
     # Si no se especifica fecha, usar hoy
     if not date:
@@ -246,8 +246,8 @@ async def get_dashboard_stats(
 ):
     """
     Obtiene estadísticas para el dashboard:
-    - Total de estudiantes registrados
-    - Estudiantes presentes
+    - Total de alumnos registrados
+    - alumnos presentes
     - Total de entradas
     - Total de salidas
     """
@@ -306,13 +306,13 @@ async def get_student_details(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtiene los detalles de un estudiante."""
+    """Obtiene los detalles de un alumno."""
     student = db.query(Student).filter(Student.id == student_id).first()
     
     if not student:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Estudiante no encontrado"
+            detail="alumno no encontrado"
         )
     
     # Check permissions (staff can view any student, guardians only their students)
@@ -320,7 +320,7 @@ async def get_student_details(
         not any(guardian.user_id == current_user.id for guardian in student.guardians)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver este estudiante"
+            detail="No tienes permiso para ver este alumno"
         )
     
     # Build response
@@ -354,7 +354,7 @@ async def get_student_details(
                     "name": student.classroom.grade_level.value
                 }
     except (AttributeError, TypeError, LookupError) as e:
-        print(f"Error al obtener datos de aula para estudiante {student.id}: {str(e)}")
+        print(f"Error al obtener datos de aula para alumno {student.id}: {str(e)}")
         result["classroom"] = None
     
     return result
@@ -366,13 +366,13 @@ async def get_student_access_logs_endpoint(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtiene los registros de acceso de un estudiante."""
+    """Obtiene los registros de acceso de un alumno."""
     student = db.query(Student).filter(Student.id == student_id).first()
     
     if not student:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Estudiante no encontrado"
+            detail="alumno no encontrado"
         )
     
     # Check permissions (staff can view any student, guardians only their students)
@@ -380,7 +380,7 @@ async def get_student_access_logs_endpoint(
         not any(guardian.user_id == current_user.id for guardian in student.guardians)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver los registros de este estudiante"
+            detail="No tienes permiso para ver los registros de este alumno"
         )
     
     # Get access logs
@@ -417,13 +417,13 @@ async def get_student_guardians(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtiene los tutores de un estudiante."""
+    """Obtiene los tutores de un alumno."""
     student = db.query(Student).filter(Student.id == student_id).first()
     
     if not student:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Estudiante no encontrado"
+            detail="alumno no encontrado"
         )
     
     # Check permissions (staff can view any student, guardians only their students)
@@ -431,7 +431,7 @@ async def get_student_guardians(
         not any(guardian.user_id == current_user.id for guardian in student.guardians)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver los tutores de este estudiante"
+            detail="No tienes permiso para ver los tutores de este alumno"
         )
     
     # Format guardian data
@@ -453,7 +453,7 @@ async def get_guardian_students(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtiene los estudiantes asociados al tutor actual."""
+    """Obtiene los alumnos asociados al tutor actual."""
     if not current_user.guardian_profile:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -484,7 +484,7 @@ async def get_guardian_students(
                 student_data["grade"] = student.classroom.grade_level.value
                 student_data["classroom"] = student.classroom.name
         except (AttributeError, TypeError, LookupError) as e:
-            print(f"Error al obtener datos de aula para estudiante {student.id}: {str(e)}")
+            print(f"Error al obtener datos de aula para alumno {student.id}: {str(e)}")
         
         result.append(student_data)
     
@@ -539,7 +539,7 @@ async def generate_qr_code(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Genera un código QR para autorizar la recogida de un estudiante."""
+    """Genera un código QR para autorizar la recogida de un alumno."""
     if not current_user.guardian_profile:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -552,7 +552,7 @@ async def generate_qr_code(
     if not student_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Se requiere el ID del estudiante"
+            detail="Se requiere el ID del alumno"
         )
     
     guardian_id = current_user.guardian_profile.id
@@ -570,13 +570,13 @@ async def generate_qr_code(
     if not student:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Estudiante no encontrado"
+            detail="alumno no encontrado"
         )
     
     if student not in guardian.students:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para generar códigos para este estudiante"
+            detail="No tienes permiso para generar códigos para este alumno"
         )
     
     # Create QR code
@@ -642,15 +642,15 @@ async def get_all_students(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Obtiene la lista de todos los estudiantes."""
-    # Solo personal autorizado puede ver todos los estudiantes
+    """Obtiene la lista de todos los alumnos."""
+    # Solo personal autorizado puede ver todos los alumnos
     if not current_user.staff_profile:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver todos los estudiantes"
+            detail="No tienes permiso para ver todos los alumnos"
         )
     
-    # Obtener todos los estudiantes activos
+    # Obtener todos los alumnos activos
     students = db.query(Student).filter(Student.is_active == True).all()
     
     # Formatear resultados
@@ -670,7 +670,7 @@ async def get_all_students(
             if student.classroom and student.classroom.grade_level:
                 student_data["grade_level"] = {"name": student.classroom.grade_level.value}
         except (AttributeError, TypeError, LookupError) as e:
-            print(f"Error al obtener grade_level para estudiante {student.id}: {str(e)}")
+            print(f"Error al obtener grade_level para alumno {student.id}: {str(e)}")
         
         results.append(student_data)
     
